@@ -3,12 +3,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const Connection = async () => {
-    const URI = "mongodb+srv://arjunchaudhary477058:<db_password>@blog-app.hgznn.mongodb.net/?retryWrites=true&w=majority&appName=blog-app";
+const Connection = async (username,password) => {
+    const URI = `mongodb+srv://${username}:${password}@cluster0.u4txy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
     try {
         await mongoose.connect(URI, {
-            useNewUrlParser: true,
             ssl: true,
         });
         console.log("Database connected successfully");

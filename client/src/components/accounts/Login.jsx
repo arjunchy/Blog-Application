@@ -3,6 +3,8 @@ import React from 'react';
 import { useState } from 'react';
 
 import { Box, TextField, Button, styled, Typography } from '@mui/material';
+import { API } from '../../service/api';
+
 import logo from '../../assets/logo.png';
 
 const Component = styled(Box)`
@@ -76,6 +78,11 @@ export const Login = () => {
     const onInputChange = (e) => {
         setsignup({...signup, [e.target.name]: e.target.value});
     }
+
+    const signupUser = async() => {
+        let response = await API.userSignup(signup);
+    }
+
     return (
         <Component>
             <Box>
@@ -115,7 +122,7 @@ export const Login = () => {
                                 '& .MuiInput-underline:after': { borderBottomColor: '#f50057' },
                                 '& .MuiInputLabel-root.Mui-focused': { color: '#f50057' }
                             }} />
-                            <CreateAccountButton variant="tex">Signup</CreateAccountButton>
+                            <CreateAccountButton onclick = {() => signupUser} variant="tex">Signup</CreateAccountButton>
                             <Text style={{ textAlign: 'center' }}>OR</Text>
                             <LoginButton onClick={() => togglesignup()} variant="text">Already have an account</LoginButton>
                         </Wrapper>
