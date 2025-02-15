@@ -22,16 +22,16 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
     function (response) {
-        return processRespopnse(response);
+        return processResponse(response);
     },
     function (error) {
         return Promise.reject(processError(error));
     }
 );
 
-const processRespopnse = (response) => {
+const processResponse = (response) => {
     if (response?.status === 200) {
-        return { isSucess: true, data: response.data };
+        return { isSuccess: true, data: response.data };
     }
     return {
         isFailure: true,
@@ -72,7 +72,7 @@ const processError = (error) => {
 const API = {};
 
 for(const [key,value] of Object.entries(SERVICE_URL)){
-    API[key] = async (body,showUploadProgress,showDownloadProgress) => {
+    API[key] = async (body,showUploadProgress,showDownloadProgress) => 
         axiosInstance({
             method: value.method,
             url: value.url,
@@ -91,7 +91,7 @@ for(const [key,value] of Object.entries(SERVICE_URL)){
                 }
             },
         })
-    }
+    
 }   
 
 export {API};

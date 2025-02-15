@@ -58,6 +58,13 @@ color: #878787;
 font-size: 16px;
 `;
 
+const Error = styled(Typography)`
+    color: red;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-top: 10px;
+    font-weight: 500;
+`;
 
 const SignUpInitInputValue = {
     name:'',
@@ -70,6 +77,7 @@ export const Login = () => {
 
     const [account, toggleaccount] = useState('login');
     const [signup, setsignup] = useState(SignUpInitInputValue);
+    const [error,setError] = useState('');
 
     const togglesignup = () => {
         account === 'login' ? toggleaccount('signup') : toggleaccount('login');
@@ -79,8 +87,16 @@ export const Login = () => {
         setsignup({...signup, [e.target.name]: e.target.value});
     }
 
-    const signupUser = async() => {
+    const signupUser = async () => {
         let response = await API.userSignup(signup);
+        if (response.isSuccess) {
+            setError
+            setsignup(SignUpInitInputValue);
+            toggleaccount('login');
+            alert('Signup successful');
+        }else{
+            setError("Something went wrong! Please try again later")
+        }
     }
 
     return (
@@ -100,6 +116,8 @@ export const Login = () => {
                                 '& .MuiInput-underline:after': { borderBottomColor: '#f50057' },
                                 '& .MuiInputLabel-root.Mui-focused': { color: '#f50057' }
                             }} />
+                            { error && <Error>{ error}</Error>}
+
                             <LoginButton variant="contained">Login</LoginButton>
                             <Text style={{ textAlign: 'center' }}>OR</Text>
                             <CreateAccountButton onClick={() => togglesignup()} variant="text">Create an account</CreateAccountButton>
@@ -122,7 +140,9 @@ export const Login = () => {
                                 '& .MuiInput-underline:after': { borderBottomColor: '#f50057' },
                                 '& .MuiInputLabel-root.Mui-focused': { color: '#f50057' }
                             }} />
-                            <CreateAccountButton onclick = {() => signupUser} variant="tex">Signup</CreateAccountButton>
+
+                            { error && <Error>{ error}</Error>}
+                            <CreateAccountButton onClick = {() => signupUser()} variant="tex">Signup</CreateAccountButton>
                             <Text style={{ textAlign: 'center' }}>OR</Text>
                             <LoginButton onClick={() => togglesignup()} variant="text">Already have an account</LoginButton>
                         </Wrapper>
