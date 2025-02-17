@@ -1,9 +1,11 @@
 import React from 'react';
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import { Box, TextField, Button, styled, Typography } from '@mui/material';
 import { API } from '../../service/api';
+import { DataContext } from '../../context/DataProvider';
+import { useNavigate } from 'react-router-dom';
 
 import logo from '../../assets/logo.png';
 
@@ -12,6 +14,10 @@ width: 400px;
 margin: auto;
 box-shadow: 5px 2px 5px 2px rgba(0 0 0/0.6); 
 border-radius: 10px;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
 `;
 
 const Image = styled('img')({
@@ -78,13 +84,17 @@ const SignUpInitInputValue = {
     password: ''
 };
 
-export const Login = () => {
+export const Login = ({ isUserAuthenticated }) => {
     const imageURL = logo;
 
     const [account, toggleaccount] = useState('login');
     const [signup, setsignup] = useState(SignUpInitInputValue);
     const [error, setError] = useState('');
     const [login, setLogin] = useState(LoginInitInputValue);
+
+    const { setAccount } = useContext(DataContext);
+
+    const navigate = useNavigate();
 
     const togglesignup = () => {
         account === 'login' ? toggleaccount('signup') : toggleaccount('login');
@@ -114,12 +124,18 @@ export const Login = () => {
         let response = await API.userLogin(login)
         if (response.isSuccess) {
             setError('');
+            sessionStorage.setItem('accessToken', `Bearer ${response.data.accessToken}`);
+            sessionStorage.setItem('refreshToken', `Bearer ${response.data.refreshToken}`);
+            setAccount({ username: response.data.username, name: response.data.name })
+            isUserAuthenticated(true);
             alert('Login successful');
+            navigate('/');
         } else {
             setError("Something went wrong! Please try again later")
         }
     }
-    
+
+
     return (
         <Component>
             <Box>
