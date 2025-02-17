@@ -66,10 +66,16 @@ const Error = styled(Typography)`
     font-weight: 500;
 `;
 
+
+const LoginInitInputValue = {
+    username: '',
+    password: ''
+}
+
 const SignUpInitInputValue = {
-    name:'',
-    username:'',
-    password:''
+    name: '',
+    username: '',
+    password: ''
 };
 
 export const Login = () => {
@@ -77,28 +83,43 @@ export const Login = () => {
 
     const [account, toggleaccount] = useState('login');
     const [signup, setsignup] = useState(SignUpInitInputValue);
-    const [error,setError] = useState('');
+    const [error, setError] = useState('');
+    const [login, setLogin] = useState(LoginInitInputValue);
 
     const togglesignup = () => {
         account === 'login' ? toggleaccount('signup') : toggleaccount('login');
     }
 
     const onInputChange = (e) => {
-        setsignup({...signup, [e.target.name]: e.target.value});
+        setsignup({ ...signup, [e.target.name]: e.target.value });
     }
 
     const signupUser = async () => {
         let response = await API.userSignup(signup);
         if (response.isSuccess) {
-            setError
+            setError('');
             setsignup(SignUpInitInputValue);
             toggleaccount('login');
             alert('Signup successful');
-        }else{
+        } else {
             setError("Something went wrong! Please try again later")
         }
     }
 
+    const onValueChange = (e) => {
+        setLogin({ ...login, [e.target.name]: e.target.value });
+    }
+
+    const loginUser = async () => {
+        let response = await API.userLogin(login)
+        if (response.isSuccess) {
+            setError('');
+            alert('Login successful');
+        } else {
+            setError("Something went wrong! Please try again later")
+        }
+    }
+    
     return (
         <Component>
             <Box>
@@ -106,19 +127,19 @@ export const Login = () => {
                 {
                     account === 'login' ?
                         <Wrapper>
-                            <TextField label="Username" variant="standard" sx={{
+                            <TextField label="Username" value={login.username} onChange={(e) => { onValueChange(e) }} name="username" variant="standard" sx={{
                                 '& .MuiInput-underline:before': { borderBottomColor: '#f50057' },
                                 '& .MuiInput-underline:after': { borderBottomColor: '#f50057' },
                                 '& .MuiInputLabel-root.Mui-focused': { color: '#f50057' }
                             }} />
-                            <TextField label="Password" variant="standard" sx={{
+                            <TextField label="Password" value={login.password} onChange={(e) => { onValueChange(e) }} name="password" variant="standard" sx={{
                                 '& .MuiInput-underline:before': { borderBottomColor: '#f50057' },
                                 '& .MuiInput-underline:after': { borderBottomColor: '#f50057' },
                                 '& .MuiInputLabel-root.Mui-focused': { color: '#f50057' }
                             }} />
-                            { error && <Error>{ error}</Error>}
+                            {error && <Error>{error}</Error>}
 
-                            <LoginButton variant="contained">Login</LoginButton>
+                            <LoginButton variant="contained" onClick={(e) => { loginUser(e) }}>Login</LoginButton>
                             <Text style={{ textAlign: 'center' }}>OR</Text>
                             <CreateAccountButton onClick={() => togglesignup()} variant="text">Create an account</CreateAccountButton>
                         </Wrapper>
@@ -128,7 +149,7 @@ export const Login = () => {
                             <TextField label="Enter name" variant="standard" name="name" onChange={(e) => { onInputChange(e) }} sx={{
                                 '& .MuiInput-underline:before': { borderBottomColor: '#f50057' },
                                 '& .MuiInput-underline:after': { borderBottomColor: '#f50057' },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#f50057' }
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#f50057' },
                             }} />
                             <TextField label="Enter username" variant="standard" name="username" onChange={(e) => { onInputChange(e) }} sx={{
                                 '& .MuiInput-underline:before': { borderBottomColor: '#f50057' },
@@ -141,8 +162,8 @@ export const Login = () => {
                                 '& .MuiInputLabel-root.Mui-focused': { color: '#f50057' }
                             }} />
 
-                            { error && <Error>{ error}</Error>}
-                            <CreateAccountButton onClick = {() => signupUser()} variant="tex">Signup</CreateAccountButton>
+                            {error && <Error>{error}</Error>}
+                            <CreateAccountButton onClick={() => signupUser()} variant="tex">Signup</CreateAccountButton>
                             <Text style={{ textAlign: 'center' }}>OR</Text>
                             <LoginButton onClick={() => togglesignup()} variant="text">Already have an account</LoginButton>
                         </Wrapper>
