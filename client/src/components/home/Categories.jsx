@@ -2,6 +2,7 @@ import { Button, Table, TableBody, TableCell, TableHead, TableRow, styled } from
 
 import { categories } from "../../constants/data";
 
+import {Link} from 'react-router-dom';
 
 
 const StyledTable = styled(Table)`
@@ -18,9 +19,11 @@ color: #fff;
 const Categories = () => {
     return (
         <>
-            <StyledButton variant="contained">
-                Create Blog
-            </StyledButton>
+            <Link to = '/create' style={{textDecoration: 'none'}}>
+                <StyledButton variant="contained">
+                    Create Blog
+                </StyledButton>
+            </Link>
 
             <StyledTable>
                 <TableHead>
