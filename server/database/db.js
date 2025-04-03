@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const Connection = async (username,password) => {
-    const URI = `mongodb+srv://${username}:${password}@cluster0.u4txy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+    const URI = `mongodb+srv://${username}:${password}@cluster0.u4txy.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0`;
     try {
         await mongoose.connect(URI, {
             tls: true, // Use TLS explicitly
