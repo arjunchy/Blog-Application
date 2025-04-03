@@ -4,7 +4,7 @@ import { Box, styled, FormControl, InputBase, Button, TextareaAutosize } from "@
 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { DataContext } from '../../context/DataProvider';
  
@@ -62,11 +62,14 @@ const CreatePost = () => {
     
     const location = useLocation();
     
+    const navigate = useNavigate();
+
     const url = post.picture? post.picture : `https://images.unsplash.com/photo-1543128639-4cb7e6eeef1b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFwdG9wJTIwc2V0dXB8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80`;
     
     const handleChange = (e) => {
         setPost({ ...post, [e.target.name]: e.target.value });
     }
+    
 
     useEffect(() => {
         const getImage = async () => {
@@ -85,6 +88,12 @@ const CreatePost = () => {
     },[file])
 
 
+    const savePost = async () => {
+        let response = await API.createPost(post);
+        if(response.isSuccess){
+            navigate('/');
+        }
+    }
         
     
     return (
@@ -104,7 +113,7 @@ const CreatePost = () => {
                 />
 
                 <InpuTextField placeholder="Title"  onChange={(e) => handleChange(e)} name='title'/>
-                <Button varient="contained">Publish</Button>
+                <Button varient="contained" onClick={(e) => savePost(e)}>Publish</Button>
             </StyledFormControl>
 
             <Textarea
