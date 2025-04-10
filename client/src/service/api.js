@@ -7,6 +7,7 @@ const axiosInstance = axios.create({
     baseURL: API_URL,
     timeout: 1000,
     headers: {
+        authorization: getAccessToken(),
         "Accept": "application/json, multipart/form-data", 
     }
 })

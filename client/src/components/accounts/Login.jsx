@@ -128,7 +128,6 @@ export const Login = ({ isUserAuthenticated }) => {
             sessionStorage.setItem('refreshToken', `Bearer ${response.data.refreshToken}`);
             setAccount({ username: response.data.username, name: response.data.name })
             isUserAuthenticated(true);
-            alert('Login successful');
             navigate('/');
         } else {
             setError("Something went wrong! Please try again later")
