@@ -7,9 +7,6 @@ import { signupUser, loginUser } from '../controller/user-controller.js';
 import { createPost } from '../controller/post-controller.js';
 import { authenticateToken } from '../controller/jwt-controller.js';
 
-import { createPost } from '../controller/post-controller.js';
-import { authenticateToken } from '../controller/jwt-controller.js';
-
 
 const router = express.Router();
 

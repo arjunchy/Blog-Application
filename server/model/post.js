@@ -10,17 +10,10 @@ const PostSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-<<<<<<< HEAD
-    picture:{
-        type: String,
-        required: true
-    },
-=======
     // picture:{
     //     type: String,
     //     required: true
     // },
->>>>>>> ac3876e (removed imageupload)
     username:{
         type: String,
         required: true,
