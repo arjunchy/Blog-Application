@@ -7,7 +7,7 @@ const Container = styled(Box)(({ theme }) => ({
     padding: 20,
     margin: '12px auto',
     height: '220px',
-    minWidth: '230px',
+    minWidth: '250px',
     maxWidth: '300px', 
     backgroundColor: '#ffffff',
     boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
