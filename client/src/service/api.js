@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { API_NOTIFICATION_MESSAGES, SERVICE_URL } from '../constants/config';
-import { getAccessToken } from '../utils/common-utils';
+import { getAccessToken, getType } from '../utils/common-utils';
 const API_URL = 'http://localhost:8000';
 const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -14,6 +14,12 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     function (config) {
+        if(config.TYPE.params){
+            config.params = config.TYPE.params;
+        }
+        else if(config.TYPE.query){
+            config.url = config.url + "/" + config.TYPE.query;
+        }
         return config;
     },
     function (error) {
@@ -29,6 +35,8 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(processError(error));
     }
 );
+
+
 
 const processResponse = (response) => {
     if (response?.status === 200) {
@@ -82,6 +90,7 @@ for(const [key,value] of Object.entries(SERVICE_URL)){
             headers: {
                 authorization: getAccessToken()
             },
+            TYPE: getType(value, body),
             onUploadProgress: function(progressEvent){
                 if(showUploadProgress){
                     let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);

@@ -12,7 +12,7 @@ const StyledTable = styled(Table)`
 const StyledButton = styled(Button)`
 margin: 20px;
 width: 85%;
-background: #6495ED;
+background: rgb(245, 0, 86);
 color: #fff;
 `
 
