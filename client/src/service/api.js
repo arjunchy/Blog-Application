@@ -17,8 +17,14 @@ axiosInstance.interceptors.request.use(
         if(config.TYPE.params){
             config.params = config.TYPE.params;
         }
-        else if(config.TYPE.query){
-            config.url = config.url + "/" + config.TYPE.query;
+        // else if(config.TYPE.query){
+        //     config.url = config.url + "/" + config.TYPE.query;
+        // }
+
+        else if (config.TYPE.query) {
+            Object.keys(config.TYPE.query).forEach(param => {
+                config.url = config.url.replace(`:${param}`, config.TYPE.query[param]);
+            });
         }
         return config;
     },

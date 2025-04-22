@@ -1,6 +1,5 @@
 import { Box, Typography, styled } from "@mui/material";
 
-
 const Container = styled(Box)(({ theme }) => ({
     border: '1px solid #e0e0e0',
     borderRadius: 12,
@@ -8,7 +7,7 @@ const Container = styled(Box)(({ theme }) => ({
     margin: '12px auto',
     height: '220px',
     minWidth: '250px',
-    maxWidth: '300px', 
+    maxWidth: '300px',
     backgroundColor: '#ffffff',
     boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
     display: 'flex',
@@ -48,6 +47,12 @@ const Title = styled(Typography)({
     fontWeight: 700,
     color: '#212121',
     textTransform: 'capitalize',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    wordBreak: 'break-word',
 });
 
 const Description = styled(Typography)({

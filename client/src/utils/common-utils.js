@@ -16,6 +16,9 @@ export const getType = (value, body) => {
         }
         return {params: {body}}
     }
+    else if (value.url.includes(':')) {
+        return { query: body };
+    }
     return {};
 
 }

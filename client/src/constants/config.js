@@ -29,4 +29,5 @@ export const SERVICE_URL = {
     uploadFile: { url: '/file/upload', method: 'POST' },
     createPost: { url: '/create', method: 'POST' },
     getAllPosts: { url: '/posts', method: 'GET', params: true },
+    getPostById: { url: '/post/:id', method: 'GET' }
 }
