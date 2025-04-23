@@ -1,15 +1,14 @@
 import {
     Box, Typography, styled, Divider, IconButton, Tooltip, Slide, Fade,
-    Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button
+    Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button,
+    Snackbar, Alert
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { API } from '../../service/api';
-
-import { useNavigate } from 'react-router-dom';  
 
 const primaryColor = 'rgb(245, 0, 86)';
 
@@ -113,6 +112,11 @@ const DetailView = () => {
     const [post, setPost] = useState({});
     const [editOpen, setEditOpen] = useState(false);
     const [editData, setEditData] = useState({ title: '', description: '' });
+
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -139,18 +143,24 @@ const DetailView = () => {
         });
     };
 
+    const showSnackbar = (message, severity = 'success') => {
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
     const handleDelete = async () => {
         try {
             const response = await API.deletePostById({ id: post._id });
             if (response.isSuccess) {
-                alert('Post has been deleted!');
-                navigate('/');
+                showSnackbar('Post has been deleted!');
+                setTimeout(() => navigate('/'), 1500);
             } else {
-                alert('Failed to delete post!');
+                showSnackbar('Failed to delete post!', 'error');
             }
         } catch (error) {
             console.error('Error deleting post:', error);
-            alert('An error occurred while deleting the post!');
+            showSnackbar('An error occurred while deleting the post!', 'error');
         }
     };
 
@@ -168,23 +178,22 @@ const DetailView = () => {
         setEditData((prev) => ({ ...prev, [name]: value }));
     };
 
-const handleEditSave = async () => {
+    const handleEditSave = async () => {
         try {
             const updatedPostData = { id: post._id, ...editData };
             const response = await API.updatePostById(updatedPostData);
-            
             if (response.isSuccess) {
                 setPost((prevPost) => ({ ...prevPost, ...editData }));
                 setEditOpen(false);
-                alert('Post has been updated successfully!');
+                showSnackbar('Post has been updated successfully!');
             } else if (response.code === 11000) {
-                alert('Title already exists. Please choose a different title.');
+                showSnackbar('Title already exists. Please choose a different title.', 'warning');
             } else {
-                alert('Failed to update the post. Please try again!');
+                showSnackbar('Failed to update the post. Please try again!', 'error');
             }
         } catch (error) {
             console.error('Error updating the post:', error);
-            alert('An error occurred while updating the post. Please try again later.');
+            showSnackbar('An error occurred while updating the post.', 'error');
         }
     };
 
@@ -257,12 +266,10 @@ const handleEditSave = async () => {
                         onChange={handleEditChange}
                         margin="normal"
                         sx={{
-                            '& .MuiInputLabel-root.Mui-focused': {
-                                color: 'rgb(245, 0, 86)',
-                            },
+                            '& .MuiInputLabel-root.Mui-focused': { color: primaryColor },
                             '& .MuiOutlinedInput-root': {
                                 '&.Mui-focused fieldset': {
-                                    borderColor: 'rgb(245, 0, 86)',
+                                    borderColor: primaryColor,
                                 },
                             }
                         }}
@@ -278,41 +285,49 @@ const handleEditSave = async () => {
                         onChange={handleEditChange}
                         margin="normal"
                         sx={{
-                            '& .MuiInputLabel-root.Mui-focused': {
-                                color: 'rgb(245, 0, 86)',
-                            },
+                            '& .MuiInputLabel-root.Mui-focused': { color: primaryColor },
                             '& .MuiOutlinedInput-root': {
                                 '&.Mui-focused fieldset': {
-                                    borderColor: 'rgb(245, 0, 86)',
+                                    borderColor: primaryColor,
                                 },
                             }
                         }}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        onClick={handleEditClose}
-                        color="inherit"
-                        sx={{
-                            textTransform: 'none',
-                            color: '#f50056',
-                            boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)',
-                            '&:hover': {
-                                color: '#f50056',
-                            },
-                        }}
-                    >
+                    <Button onClick={handleEditClose} color="inherit" sx={{ textTransform: 'none', color: primaryColor }}>
                         Cancel
                     </Button>
-                    <Button
-                        variant="contained"
-                        onClick={handleEditSave}
-                        sx={{ backgroundColor: primaryColor }}
-                    >
+                    <Button variant="contained" onClick={handleEditSave} sx={{ backgroundColor: primaryColor }}>
                         Save
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Snackbar for notifications */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                TransitionComponent={Slide}
+            >
+                <Alert
+                    onClose={() => setSnackbarOpen(false)}
+                    severity={snackbarSeverity}
+                    variant="filled"
+                    sx={{
+                        width: '100%',
+                        backgroundColor: snackbarSeverity === 'success' ? primaryColor : 
+                                         snackbarSeverity === 'error' ? 'rgb(220, 0, 0)' : 
+                                         snackbarSeverity === 'warning' ? 'rgb(255, 165, 0)' : 
+                                         'rgb(0, 123, 255)', 
+                        color: 'white',
+                    }}
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

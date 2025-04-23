@@ -42,8 +42,6 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-
-
 const processResponse = (response) => {
     if (response?.status === 200) {
         return { isSuccess: true, data: response.data };
