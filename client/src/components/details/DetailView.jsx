@@ -1,9 +1,15 @@
-import { Box, Typography, styled, Divider, IconButton, Tooltip, Slide, Fade } from '@mui/material';
+import {
+    Box, Typography, styled, Divider, IconButton, Tooltip, Slide, Fade,
+    Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { API } from '../../service/api';
+
+import { useNavigate } from 'react-router-dom';  
 
 const primaryColor = 'rgb(245, 0, 86)';
 
@@ -26,10 +32,10 @@ const Title = styled(Typography)(({ theme }) => ({
     fontSize: '3rem',
     fontWeight: 700,
     color: primaryColor,
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(4),
     wordBreak: 'break-word',
     textAlign: 'center',
-    animation: 'fadeIn 1s ease-out',
+    marginTop: theme.spacing(4),
     [theme.breakpoints.down('sm')]: {
         fontSize: '2rem',
     },
@@ -52,7 +58,6 @@ const Label = styled('span')({
 
 const Description = styled(Box)(({ theme }) => ({
     marginTop: theme.spacing(3),
-    animation: 'fadeIn 1s ease-out',
 }));
 
 const Paragraph = styled(Typography)(({ theme }) => ({
@@ -61,7 +66,8 @@ const Paragraph = styled(Typography)(({ theme }) => ({
     lineHeight: 1.9,
     marginBottom: theme.spacing(2.5),
     textAlign: 'justify',
-    transition: 'all 0.3s ease-in-out',
+    wordBreak: 'break-word',
+    overflowWrap: 'anywhere',
     '&:hover': {
         color: primaryColor,
     },
@@ -76,13 +82,12 @@ const DividerLine = styled(Divider)(({ theme }) => ({
 
 const EditButton = styled(IconButton)(({ theme }) => ({
     position: 'absolute',
-    top: theme.spacing(2),
+    top: theme.spacing(5),
     right: theme.spacing(6),
     color: primaryColor,
     borderRadius: '50%',
     padding: theme.spacing(1),
     marginRight: 10,
-    // boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
     transition: 'transform 0.2s ease, background-color 0.3s ease',
     '&:hover': {
         backgroundColor: 'rgba(245, 0, 86, 0.2)',
@@ -92,12 +97,11 @@ const EditButton = styled(IconButton)(({ theme }) => ({
 
 const DeleteButton = styled(IconButton)(({ theme }) => ({
     position: 'absolute',
-    top: theme.spacing(2),
+    top: theme.spacing(5),
     right: theme.spacing(2),
     color: 'rgb(220, 0, 0)',
     borderRadius: '50%',
     padding: theme.spacing(1),
-    // boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
     transition: 'transform 0.2s ease, background-color 0.3s ease',
     '&:hover': {
         backgroundColor: 'rgba(220, 0, 0, 0.2)',
@@ -107,7 +111,10 @@ const DeleteButton = styled(IconButton)(({ theme }) => ({
 
 const DetailView = () => {
     const [post, setPost] = useState({});
+    const [editOpen, setEditOpen] = useState(false);
+    const [editData, setEditData] = useState({ title: '', description: '' });
     const { id } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -120,7 +127,6 @@ const DetailView = () => {
                 console.error('Failed to fetch post:', error);
             }
         };
-
         fetchData();
     }, [id]);
 
@@ -135,10 +141,50 @@ const DetailView = () => {
 
     const handleDelete = async () => {
         try {
-            console.log('Post deleted:', post._id);
-            alert('Post has been deleted!');
+            const response = await API.deletePostById({ id: post._id });
+            if (response.isSuccess) {
+                alert('Post has been deleted!');
+                navigate('/');
+            } else {
+                alert('Failed to delete post!');
+            }
         } catch (error) {
             console.error('Error deleting post:', error);
+            alert('An error occurred while deleting the post!');
+        }
+    };
+
+    const handleEditOpen = () => {
+        setEditData({ title: post.title, description: post.description });
+        setEditOpen(true);
+    };
+
+    const handleEditClose = () => {
+        setEditOpen(false);
+    };
+
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditData((prev) => ({ ...prev, [name]: value }));
+    };
+
+const handleEditSave = async () => {
+        try {
+            const updatedPostData = { id: post._id, ...editData };
+            const response = await API.updatePostById(updatedPostData);
+            
+            if (response.isSuccess) {
+                setPost((prevPost) => ({ ...prevPost, ...editData }));
+                setEditOpen(false);
+                alert('Post has been updated successfully!');
+            } else if (response.code === 11000) {
+                alert('Title already exists. Please choose a different title.');
+            } else {
+                alert('Failed to update the post. Please try again!');
+            }
+        } catch (error) {
+            console.error('Error updating the post:', error);
+            alert('An error occurred while updating the post. Please try again later.');
         }
     };
 
@@ -147,7 +193,7 @@ const DetailView = () => {
             {post.title && (
                 <>
                     <Tooltip title="Edit Post">
-                        <EditButton>
+                        <EditButton onClick={handleEditOpen}>
                             <EditIcon />
                         </EditButton>
                     </Tooltip>
@@ -195,6 +241,78 @@ const DetailView = () => {
                     )}
                 </div>
             </Slide>
+
+            {/* Edit Dialog */}
+            <Dialog open={editOpen} onClose={handleEditClose} fullWidth maxWidth="md">
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, color: primaryColor }}>
+                    <EditNoteIcon sx={{ fontSize: 28 }} />
+                    Edit Post
+                </DialogTitle>
+                <DialogContent dividers>
+                    <TextField
+                        fullWidth
+                        label="Title"
+                        name="title"
+                        value={editData.title}
+                        onChange={handleEditChange}
+                        margin="normal"
+                        sx={{
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'rgb(245, 0, 86)',
+                            },
+                            '& .MuiOutlinedInput-root': {
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'rgb(245, 0, 86)',
+                                },
+                            }
+                        }}
+                    />
+
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={6}
+                        label="Description"
+                        name="description"
+                        value={editData.description}
+                        onChange={handleEditChange}
+                        margin="normal"
+                        sx={{
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'rgb(245, 0, 86)',
+                            },
+                            '& .MuiOutlinedInput-root': {
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'rgb(245, 0, 86)',
+                                },
+                            }
+                        }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={handleEditClose}
+                        color="inherit"
+                        sx={{
+                            textTransform: 'none',
+                            color: '#f50056',
+                            boxShadow: '1px 1px 1px 1px rgba(0, 0, 0, 0.2)',
+                            '&:hover': {
+                                color: '#f50056',
+                            },
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleEditSave}
+                        sx={{ backgroundColor: primaryColor }}
+                    >
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 };

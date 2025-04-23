@@ -13,7 +13,7 @@ export const API_NOTIFICATION_MESSAGES = {
     },
     requestFailure: {
         title: 'Error',
-        message: "An error occured while loading data",
+        message: "An error occurred while loading data",
     },
     networkError: {
         title: 'Error',
@@ -29,5 +29,7 @@ export const SERVICE_URL = {
     uploadFile: { url: '/file/upload', method: 'POST' },
     createPost: { url: '/create', method: 'POST' },
     getAllPosts: { url: '/posts', method: 'GET', params: true },
-    getPostById: { url: '/post/:id', method: 'GET' }
+    getPostById: { url: '/post/:id', method: 'GET' },
+    deletePostById: { url: '/post/:id', method: 'DELETE' }, 
+    updatePostById: { url: '/post/:id', method: 'PUT' } 
 }
