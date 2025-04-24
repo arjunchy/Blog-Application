@@ -10,6 +10,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { API } from '../../service/api';
 
+
+import Comments from './comments/Comments';
+
 const primaryColor = 'rgb(245, 0, 86)';
 
 const Container = styled(Box)(({ theme }) => ({
@@ -197,7 +200,7 @@ const DetailView = () => {
         }
     };
 
-    return (
+    return (<>
         <Container>
             {post.title && (
                 <>
@@ -248,7 +251,9 @@ const DetailView = () => {
                             Loading post details...
                         </Typography>
                     )}
+
                 </div>
+
             </Slide>
 
             {/* Edit Dialog */}
@@ -318,10 +323,10 @@ const DetailView = () => {
                     variant="filled"
                     sx={{
                         width: '100%',
-                        backgroundColor: snackbarSeverity === 'success' ? primaryColor : 
-                                         snackbarSeverity === 'error' ? 'rgb(220, 0, 0)' : 
-                                         snackbarSeverity === 'warning' ? 'rgb(255, 165, 0)' : 
-                                         'rgb(0, 123, 255)', 
+                        backgroundColor: snackbarSeverity === 'success' ? primaryColor :
+                            snackbarSeverity === 'error' ? 'rgb(220, 0, 0)' :
+                                snackbarSeverity === 'warning' ? 'rgb(255, 165, 0)' :
+                                    'rgb(0, 123, 255)',
                         color: 'white',
                     }}
                 >
@@ -329,6 +334,8 @@ const DetailView = () => {
                 </Alert>
             </Snackbar>
         </Container>
+        <Comments post={post} />
+    </>
     );
 };
 

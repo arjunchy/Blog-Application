@@ -6,6 +6,7 @@ import { signupUser, loginUser } from '../controller/user-controller.js';
 
 import { createPost, getAllPosts, getPost, deletePost, updatePost } from '../controller/post-controller.js';
 import { authenticateToken } from '../controller/jwt-controller.js';
+import { newComment, getComment, deleteComment } from '../controller/comment-controller.js';
 
 
 const router = express.Router();
@@ -21,5 +22,9 @@ router.get('/posts', authenticateToken, getAllPosts);
 router.get('/post/:id', authenticateToken, getPost);
 router.delete('/post/:id', authenticateToken, deletePost);
 router.put('/post/:id', authenticateToken, updatePost);
+
+router.post('/comment/new', authenticateToken, newComment);
+router.get('/comments/:id', authenticateToken, getComment);
+router.delete('/comment/delete/:id', authenticateToken, deleteComment);
 
 export default router;
